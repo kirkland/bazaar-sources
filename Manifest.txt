@@ -1,0 +1,5 @@
+History.txt
+Manifest.txt
+Rakefile
+README.txt
+lib/bazaar_sources.rb
