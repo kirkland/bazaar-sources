@@ -31,14 +31,14 @@ module ShopCartUsaAPI
         buy_url = (offer / 'buy_url').inner_html
         in_stock = (offer / 'in_stock').inner_html
         if in_stock != 'no'
-          offers[merchant_id] = ProductOffer.new({ :merchant_code => merchant_id,
-                                                   :merchant_name => merchant_name,
-                                                   :merchant_logo_url => merchant_logo,
-                                                   :cpc => cpc,
-                                                   :price => base_price,
-                                                   :shipping => nil,
-                                                   :offer_url => CGI::unescapeHTML(buy_url),
-                                                   :offer_tier => ProductOffer::OFFER_TIER_ONE })
+          offers[merchant_id] = { :merchant_code => merchant_id,
+                                  :merchant_name => merchant_name,
+                                  :merchant_logo_url => merchant_logo,
+                                  :cpc => cpc,
+                                  :price => base_price,
+                                  :shipping => nil,
+                                  :offer_url => CGI::unescapeHTML(buy_url),
+                                  :offer_tier => 1 }
         end
       end
     end

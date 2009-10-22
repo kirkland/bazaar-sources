@@ -30,16 +30,16 @@ class ShopzillaAPI
         condition = safe_inner_text(offer.at('condition'))
         stock = safe_inner_text(offer.at('stock'))
         if is_likely_new_condition?(condition) && is_likely_in_stock?(stock)
-          offers[merchant_id] = ProductOffer.new({ :merchant_code => merchant_id,
-                                                   :merchant_name => safe_unescape_html(merchant_name),
-                                                   :merchant_logo_url => "http://img.bizrate.com/merchant/#{merchant_id}.gif",
-                                                   :cpc => nil,
-                                                   :price => price,
-                                                   :shipping => shipping,
-                                                   :offer_url => safe_unescape_html(url),
-                                                   :offer_tier => ProductOffer::OFFER_TIER_ONE,
-                                                   :merchant_rating => merchant_rating,
-                                                   :num_merchant_reviews => nil })
+          offers[merchant_id] = { :merchant_code => merchant_id,
+                                  :merchant_name => safe_unescape_html(merchant_name),
+                                  :merchant_logo_url => "http://img.bizrate.com/merchant/#{merchant_id}.gif",
+                                  :cpc => nil,
+                                  :price => price,
+                                  :shipping => shipping,
+                                  :offer_url => safe_unescape_html(url),
+                                  :offer_tier => 1,
+                                  :merchant_rating => merchant_rating,
+                                  :num_merchant_reviews => nil }
         end
       end
     end

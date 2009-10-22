@@ -20,16 +20,6 @@ module AmazonAPI
     "http://www.amazon.com/gp/offer-listing/#{asin}?condition=new"
   end
 
-  def self.find_offer_listing_id_by_asin_and_merchant_name(asin, merchant_name)
-    offers = findOffersByASIN(asin)
-    match = PseudoFuzzyMatching::match_string_in_array(offers.collect{|key,val| val.merchant_name}, merchant_name)
-    if !match.blank?
-      offers.find{|key,val| val.merchant_name == match}[1].offer_id
-    else
-      ''
-    end
-  end
-
   # reveal a too low to display price by adding it to the cart
   # returns the amount (in pennies) and the formatted price
   def self.reveal_too_low_to_display_price_from_offer_listing_id offer_listing_id
@@ -113,17 +103,17 @@ module AmazonAPI
           url = offer_url(asin, type, id)
           # do we already have it in the offers hash?
           # if so, we only want a lower price to override the entry.
-          if !offers[id] || offers[id].price > price
+          if !offers[id] || offers[id][:price] > price
             #add it to the offers hash
-            offers[id] = ProductOffer.new({ :merchant_code => id,
-                                            :merchant_name => CGI::unescapeHTML(name),
-                                            :merchant_logo_url => nil,
-                                            :cpc => nil,
-                                            :price => BigDecimal(price.to_s),
-                                            :shipping => nil,
-                                            :offer_url => url,
-                                            :offer_tier => type == 'seller' ? ProductOffer::OFFER_TIER_TWO : ProductOffer::OFFER_TIER_ONE,
-                                            :merchant_type => type })
+            offers[id] = { :merchant_code => id,
+                           :merchant_name => CGI::unescapeHTML(name),
+                           :merchant_logo_url => nil,
+                           :cpc => nil,
+                           :price => BigDecimal(price.to_s),
+                           :shipping => nil,
+                           :offer_url => url,
+                           :offer_tier => type == 'seller' ? 2 : 1,
+                           :merchant_type => type }
           end
         end
       end
@@ -146,7 +136,7 @@ module AmazonAPI
     offer_array.each do |ha|
       next if ha.blank? # don't care if we didn't get any offers back...
       # only overwrite if the old price is greater than the new price.
-      offers.merge!(ha) { |key, old_val, new_val| old_val.nil? || old_val.price > new_val.price ? new_val : old_val }
+      offers.merge!(ha) { |key, old_val, new_val| old_val.nil? || (old_val[:price] + old_val[:shipping] || 0) > (new_val[:price] + new_val[:shipping] || 0) ? new_val : old_val }
     end
     offers
   end
@@ -466,17 +456,17 @@ module AmazonAPI
         # Offer URL
         offer_url = offer_url(asin, merchant_type, seller_id)
 
-        offers << ProductOffer.new({ :merchant_code => seller_id,
-                                     :merchant_name => CGI::unescapeHTML(name),
-                                     :merchant_logo_url => logo_url,
-                                     :cpc => Source.amazon_source.cpc,
-                                     :price => price.nil? ? nil : BigDecimal(price.to_s),
-                                     :shipping => shipping.nil? ? nil : BigDecimal(shipping.to_s),
-                                     :offer_url => offer_url,
-                                     :offer_tier => featured_merchants ? ProductOffer::OFFER_TIER_ONE : ProductOffer::OFFER_TIER_THREE,
-                                     :merchant_rating => merchant_rating,
-                                     :num_merchant_reviews => num_merchant_reviews,
-                                     :merchant_type => merchant_type })
+        offers << { :merchant_code => seller_id,
+                    :merchant_name => CGI::unescapeHTML(name),
+                    :merchant_logo_url => logo_url,
+                    :cpc => Source.amazon_source.cpc,
+                    :price => price.nil? ? nil : BigDecimal(price.to_s),
+                    :shipping => shipping.nil? ? nil : BigDecimal(shipping.to_s),
+                    :offer_url => offer_url,
+                    :offer_tier => featured_merchants ? 1 : 3,
+                    :merchant_rating => merchant_rating,
+                    :num_merchant_reviews => num_merchant_reviews,
+                    :merchant_type => merchant_type }
       end
     end
     offers

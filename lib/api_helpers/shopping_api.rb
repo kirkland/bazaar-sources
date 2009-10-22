@@ -370,20 +370,20 @@ module ShoppingAPI
         in_stock = stock_status != 'out-of-stock' && stock_status != 'back-order'
 
         if in_stock
-          offers[product_id][store_hash[:id]] = ProductOffer.new({ :merchant_code => store_hash[:id].to_s,
-                                                                   :merchant_name => store_hash[:name],
-                                                                   :merchant_logo_url => store_hash[:logo].nil? ? nil : store_hash[:logo][:url],
-                                                                   :cpc => offer.at('cpc').nil? ? nil : (offer.at('cpc').innerText.to_f*100).to_i,
-                                                                   :price => to_d_or_nil(offer.at('basePrice').innerText),
-                                                                   :shipping => offer.at('shippingCost').attributes['checkSite'] == "true" ? nil : to_d_or_nil(offer.at('shippingCost').innerText),
-                                                                   :offer_url => offer.at('offerURL').innerText,
-                                                                   :offer_tier => ProductOffer::OFFER_TIER_ONE,
-                                                                   :merchant_rating => store_hash[:rating][:number],
-                                                                   :num_merchant_reviews => store_hash[:rating][:count] })
+          offers[product_id][store_hash[:id]] = { :merchant_code => store_hash[:id].to_s,
+                                                  :merchant_name => store_hash[:name],
+                                                  :merchant_logo_url => store_hash[:logo].nil? ? nil : store_hash[:logo][:url],
+                                                  :cpc => offer.at('cpc').nil? ? nil : (offer.at('cpc').innerText.to_f*100).to_i,
+                                                  :price => to_d_or_nil(offer.at('basePrice').innerText),
+                                                  :shipping => offer.at('shippingCost').attributes['checkSite'] == "true" ? nil : to_d_or_nil(offer.at('shippingCost').innerText),
+                                                  :offer_url => offer.at('offerURL').innerText,
+                                                  :offer_tier => 1,
+                                                  :merchant_rating => store_hash[:rating][:number],
+                                                  :num_merchant_reviews => store_hash[:rating][:count] }
         end
       end
       # return an array, don't care about the hash. was used for dup checking.
-      offers[product_id] = offers[product_id].values.sort_by{|x| x.total_price }
+      offers[product_id] = offers[product_id].values.sort_by{|x| x[:price] + (x[:shipping] || 0) }
     end
     
     [misses, offers, product_infos]
