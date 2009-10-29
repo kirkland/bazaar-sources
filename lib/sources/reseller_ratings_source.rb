@@ -3,20 +3,16 @@ require 'api_helpers/reseller_ratings_api'
 class ResellerRatingsSource < Source
   def initialize
     super(:name => 'ResellerRatings.com',
-          :keyname => 'RESELLER_RATINGS',
           :homepage => 'http://www.resellerratings.com/',
           :cpc => 0,
           :offer_enabled => false,
           :offer_ttl_seconds => 0,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => true,
           :batch_fetch_delay => 5)
   end
   
-  def supports_lifetime_ratings
-    true
-  end
-
   def url_for_merchant_source_page(merchant_source_code)
     "http://www.resellerratings.com/seller#{merchant_source_code}.html"
   end

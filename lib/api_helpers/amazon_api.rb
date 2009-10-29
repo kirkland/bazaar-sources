@@ -61,7 +61,7 @@ module AmazonAPI
         # find either ther seller id or the merchant id
         
         id = (offer / 'Merchant' / 'MerchantId').inner_html
-        if id.blank?
+        if id.nil? || id.empty?
           id = (offer / 'Seller' / 'SellerId').inner_html
           name = (offer / 'Seller' / 'Nickname').inner_html
           type = 'seller'
@@ -88,9 +88,9 @@ module AmazonAPI
           quantity = (offer / 'OfferListing' / 'Quantity').inner_html.to_i
         end
         
-        if !unformatted_price.blank?
+        if !unformatted_price.nil? && !unformatted_price.empty?
           price = unformatted_price.to_i * 0.01 # convert 21995 to 219.95
-        elsif !formatted_price.blank?  # sometimes we only get a formatted price and no amount
+        elsif !formatted_price.nil? && !formatted_price.empty?  # sometimes we only get a formatted price and no amount
           price = formatted_price.gsub(/[$,]/,'').to_f 
         else
           price = 0.0 # should never get here.
@@ -134,7 +134,7 @@ module AmazonAPI
     end
     offers = {}
     offer_array.each do |ha|
-      next if ha.blank? # don't care if we didn't get any offers back...
+      next if ha.empty? # don't care if we didn't get any offers back...
       # only overwrite if the old price is greater than the new price.
       offers.merge!(ha) { |key, old_val, new_val| old_val.nil? || (old_val[:price] + old_val[:shipping] || 0) > (new_val[:price] + new_val[:shipping] || 0) ? new_val : old_val }
     end
@@ -153,7 +153,7 @@ module AmazonAPI
     item_attributes = item / 'ItemAttributes'
     name = (item_attributes / 'Title').inner_html
     list_price = (item_attributes / 'ListPrice' / 'Amount').inner_html
-    if list_price.blank?
+    if list_price.nil? || list_price.empty?
       list_price = 0
     else
       list_price = (list_price.to_f / 100.0)
@@ -208,7 +208,7 @@ module AmazonAPI
     items.each do |item|
       begin
         small_image = item.at('SmallImage')
-        if !small_image.blank?
+        if !small_image.nil?
           small_image_url = (small_image / 'URL').inner_html
         else
           small_image_url = ''
@@ -239,12 +239,12 @@ module AmazonAPI
     begin
       details = scrape_at_a_glance_page(seller_id)
       logo_url = details[:logo_url]
-      merchant_name = details[:merchant_name] if merchant_name.blank?
+      merchant_name = details[:merchant_name] if merchant_name.nil? || merchant_name.empty?
       homepage = details[:homepage]
     rescue
     end
 
-    if merchant_name.blank?
+    if merchant_name.nil? || merchant_name.empty?
       merchant_name = "Amazon merchant (#{seller_id})"
     end
 
@@ -359,7 +359,7 @@ module AmazonAPI
         price = price_to_f(price_element.inner_text)
       end
       add_to_cart_span = row.at("td/span[text() *= 'Add to cart to see price.']")
-      if add_to_cart_span && !offer_listing_id.blank?
+      if add_to_cart_span && !offer_listing_id.nil? && !offer_listing_id.empty?
         price = price_to_f(reveal_too_low_to_display_price_from_offer_listing_id(offer_listing_id).second)
         added_to_cart = true
       end
@@ -551,7 +551,7 @@ module AmazonAPI
   end
 
   def self.price_to_f(value)
-    return nil if value.blank?
+    return nil if value.nil? || value.empty?
     value.gsub(/[^\d\.]/, '').match(/(\d*\.?\d+)/)[1].to_f rescue nil
   end
 

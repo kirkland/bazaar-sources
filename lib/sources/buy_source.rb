@@ -5,13 +5,13 @@ class BuySource < Source
 
   def initialize
     super(:name => 'Buy.com',
-          :keyname => 'BUY',
           :homepage => 'http://www.buy.com/',
           :cpc => 7,
           :offer_enabled => false,
           :offer_ttl_seconds => 86400,
           :use_for_merchant_ratings => false,
           :offer_affiliate => true,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 2)
   end
   

@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'hpricot'
 require 'api_helpers/external_url'
 
@@ -14,7 +15,7 @@ module ResellerRatingsAPI
     rr_search_url = "http://www.resellerratings.com/reseller_list.pl?keyword_search=#{URI.escape(search_text)}"
     doc_and_final_uri = open_doc(rr_search_url)
     result = []
-    unless doc_and_final_uri.nil? || doc_and_final_uri[:final_uri].blank?
+    unless doc_and_final_uri.nil? || doc_and_final_uri[:final_uri].nil? || doc_and_final_uri[:final_uri].empty?
       final_uri = URI.safe_parse(doc_and_final_uri[:final_uri])
       if final_uri.path == '/reseller_list.pl'
         # got the search results page with more than one result
@@ -43,7 +44,7 @@ module ResellerRatingsAPI
           alt_merchant_code = element.attributes['href'].match(/\/store\/(.+)$/)[1]
           existing_merchant_source = MerchantSource.find_by_source_and_alt_code(Source.reseller_ratings_source, alt_merchant_code)
           if existing_merchant_source.nil?
-            merchant_sources << MerchantSource.new({:source => Source.reseller_ratings_source, :name => name, :alt_code => alt_merchant_code})
+            merchant_sources << OpenStruct.new({:source => Source.reseller_ratings_source, :name => name, :alt_code => alt_merchant_code})
           else
             merchant_sources << existing_merchant_source
           end
@@ -74,14 +75,14 @@ module ResellerRatingsAPI
   end
 
   def self.merchant_page_url?(url)
-    !url.blank? && url.match(/\/store\/.+$/) != nil
+    !url.nil? && url.match(/\/store\/.+$/) != nil
   end
 
   private
 
   def self.convert_merchant_page_to_merchant_source(doc_and_final_uri)
     return nil if doc_and_final_uri.nil?
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = Source.reseller_ratings_source
     doc = doc_and_final_uri[:doc]
 
@@ -93,12 +94,12 @@ module ResellerRatingsAPI
     end
 
     # Use a blank 'code' to indicate we didn't find the merchant page
-    if merchant_source.code.blank?
+    if merchant_source.code.nil? || merchant_source.code.empty?
       return nil
     end
 
     # Alternative Merchant Code
-    unless doc_and_final_uri[:final_uri].blank?
+    unless doc_and_final_uri[:final_uri].nil? || doc_and_final_uri[:final_uri].empty?
       merchant_source.alt_code = alt_code_from_merchant_source_page_url(doc_and_final_uri[:final_uri])
     end
 

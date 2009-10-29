@@ -5,13 +5,13 @@ class AmazonSource < Source
 
   def initialize
     super(:name => 'Amazon',
-          :keyname => 'AMAZON',
           :homepage => 'http://www.amazon.com/',
           :cpc => 25,
           :offer_enabled => true,
           :offer_ttl_seconds => 3600,
           :use_for_merchant_ratings => true,
           :offer_affiliate => true,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 2)
   end
 
@@ -38,12 +38,7 @@ class AmazonSource < Source
   
   # fake it.
   def source_product_id(product)
-    product.amazon_asins.blank? ? nil : product.amazon_asins.first.source_id
-  end
-
-  def deal_offer_transparent?(deal_offer)
-    # This could be smarter.  Sometimes Amazon offers are transparent but usually they are not.
-    false
+    product.amazon_asins.empty? ? nil : product.amazon_asins.first.source_id
   end
 
   def fetch_best_offer(product, min_num_offers_to_qualify=nil)

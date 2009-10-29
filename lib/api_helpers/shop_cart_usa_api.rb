@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'hpricot'
 require 'open-uri'
 require 'csv'
@@ -72,12 +73,12 @@ module ShopCartUsaAPI
   def self.import_merchants_from_csv(csv_file_path, remove_existing_if_not_found=false)
     known_merchants = {}
     Merchant.find(:all).each do |merchant|
-      unless merchant.name.blank?
+      unless merchant.name.nil? || merchant.name.empty?
         merchant_name = normalize_merchant_name(merchant.name)
         if known_merchants.has_key? merchant_name
           puts "Duplicate merchant name found: #{merchant_name}"
         end
-        if merchant_name.blank?
+        if merchant_name.empty?
           puts "Normalized merchant name came out blank: #{merchant.name}"
         end
         known_merchants[merchant_name] = merchant
@@ -92,8 +93,8 @@ module ShopCartUsaAPI
       incoming_merchant_codes << merchant_code
       merchant_name = row[1].strip
       normalized_merchant_name = normalize_merchant_name(merchant_name)
-      unless normalized_merchant_name.blank?
-        new_merchant_source = MerchantSource.new
+      unless normalized_merchant_name.empty?
+        new_merchant_source = OpenStruct.new
         new_merchant_source.name = merchant_name
         new_merchant_source.code = merchant_code
         incoming_merchants[normalized_merchant_name] = new_merchant_source
@@ -153,7 +154,7 @@ module ShopCartUsaAPI
   # -----------------------------------------------------------------------------------------------
 
   def self.convert_merchant_page_to_merchant_source(merchant_source_doc)
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = Source.shop_cart_usa_source
 
     # Merchant Code
@@ -164,7 +165,7 @@ module ShopCartUsaAPI
     end
 
     # Use a blank 'code' to indicate we didn't find the merchant page
-    if merchant_source.code.blank?
+    if merchant_source.code.nil? || merchant_source.code.empty?
       return nil
     end
 

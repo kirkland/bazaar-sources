@@ -1,17 +1,18 @@
 require 'uri'
+require 'ostruct'
 require 'open-uri'
 require 'hpricot'
 
 class GoogleSource < Source
   def initialize
     super(:name => 'Google Shopping',
-          :keyname => 'GOOGLE',
           :homepage => 'http://www.google.com/products',
           :cpc => 0,
           :offer_enabled => false,
           :offer_ttl_seconds => 0,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 3)
   end
   
@@ -28,7 +29,7 @@ class GoogleSource < Source
     delay_fetch
     doc = Hpricot(open(merchant_source_page_url))
 
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = self
 
     # merchant code
@@ -55,7 +56,7 @@ class GoogleSource < Source
     element = rating_box_element.at('font[@size = "-1"]')
     unless element.nil?
       num_merchant_reviews = element.inner_text.match(/((\d|,)+)/)[1]
-      merchant_source.num_merchant_reviews = num_merchant_reviews.delete(',').to_i unless num_merchant_reviews.blank?
+      merchant_source.num_merchant_reviews = num_merchant_reviews.delete(',').to_i unless num_merchant_reviews.nil? || num_merchant_reviews.empty?
     end
 
     merchant_source
@@ -88,7 +89,7 @@ class GoogleSource < Source
       code = rating_link.attributes['href'].match(/.*&cid=(.+)&.*/)[1] unless rating_link.nil?
       puts "CID: #{code}"
       puts '-----------------------------------------------------'
-      google_sellers << {:name => name, :code => code, :domain => domain} unless domain.blank? || code.blank?
+      google_sellers << {:name => name, :code => code, :domain => domain} unless domain.nil? || domain.empty? || code.nil? || code.empty?
     end
 
     new_mappings_count = 0

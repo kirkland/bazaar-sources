@@ -1,13 +1,15 @@
+require 'ostruct'
+
 class EpinionsSource < Source
   def initialize
     super(:name => 'Epinions',
-          :keyname => 'EPINIONS',
           :homepage => 'http://www.epinions.com/',
           :cpc => 0,
           :offer_enabled => false,
           :offer_ttl_seconds => 0,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 1)
   end
 
@@ -24,7 +26,7 @@ class EpinionsSource < Source
     delay_fetch
     doc = Hpricot(open(merchant_source_page_url))
 
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = self
 
     # merchant name
@@ -57,7 +59,7 @@ class EpinionsSource < Source
     element = doc.at('span[@class = "sgr"]')
     unless element.nil?
       num_merchant_reviews = element.inner_text.match(/Reviewed by (\d+) customer/)[1]
-      merchant_source.num_merchant_reviews = num_merchant_reviews.delete(',').to_i unless num_merchant_reviews.blank?
+      merchant_source.num_merchant_reviews = num_merchant_reviews.delete(',').to_i unless num_merchant_reviews.nil? || num_merchant_reviews.empty?
     end
 
     # Homepage

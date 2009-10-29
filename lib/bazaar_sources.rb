@@ -13,3 +13,12 @@ require 'sources/shopzilla_source'
 module BazaarSources
   VERSION = '0.0.1'
 end
+
+module URI
+  CHARACTERS_DISLIKED_BY_PARSE = '^<>`| '
+  def self.safe_parse(url)
+    escaped = URI.escape(url, CHARACTERS_DISLIKED_BY_PARSE)
+    uri = URI.parse(escaped)
+    uri
+  end
+end

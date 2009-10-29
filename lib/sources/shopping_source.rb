@@ -1,15 +1,16 @@
+require 'ostruct'
 require 'api_helpers/shopping_api'
 
 class ShoppingSource < Source
   def initialize
     super(:name => 'Shopping.com',
-          :keyname => 'SHOPPING',
           :homepage => 'http://www.shopping.com/',
           :cpc => 50,
           :offer_enabled => true,
           :offer_ttl_seconds => 1800,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 2)
   end
   
@@ -34,7 +35,7 @@ class ShoppingSource < Source
       break if page_title.match(/ null /).nil?
     end
 
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = self
 
     # merchant name
@@ -66,7 +67,7 @@ class ShoppingSource < Source
     element = doc.at('table[@class = "boxTableTop"]//h3[@class = "boxTitleNB"]')
     unless element.nil?
       num_merchant_reviews = element.inner_text.match(/of\s+((\d|,)+)/)[1]
-      merchant_source.num_merchant_reviews = num_merchant_reviews.delete(',').to_i unless num_merchant_reviews.blank?
+      merchant_source.num_merchant_reviews = num_merchant_reviews.delete(',').to_i unless num_merchant_reviews.nil?|| num_merchant_reviews.empty?
     end
 
     merchant_source
@@ -89,7 +90,7 @@ class ShoppingSource < Source
 
         existing_merchant_source = MerchantSource.find_by_source_and_code(self, merchant_code)
         if existing_merchant_source.nil?
-          merchant_sources << MerchantSource.new({:source => self, :name => name, :code => merchant_code, :logo_url => logo_url})
+          merchant_sources << OpenStruct.new({:source => self, :name => name, :code => merchant_code, :logo_url => logo_url})
         else
           merchant_sources << existing_merchant_source
         end
@@ -103,7 +104,7 @@ class ShoppingSource < Source
   end
 
   def source_product_id(product)
-    product.shopping_product_id.blank? ? nil : product.shopping_product_id
+    (product.shopping_product_id.nil? || product.shopping_product_id.empty?) ? nil : product.shopping_product_id
   end
 
   def nullify_offer_url(offer_url)

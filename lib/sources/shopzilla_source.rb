@@ -1,15 +1,16 @@
+require 'ostruct'
 require 'api_helpers/shopzilla_api'
 
 class ShopzillaSource < Source
   def initialize
     super(:name => 'Shopzilla',
-          :keyname => 'SHOPZILLA',
           :homepage => 'http://www.shopzilla.com/',
           :cpc => 39,
           :offer_enabled => true,
           :offer_ttl_seconds => 1800,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 1)
   end
   
@@ -24,7 +25,7 @@ class ShopzillaSource < Source
 
   def fetch_merchant_source(merchant_source_page_url)
     delay_fetch
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = self
 
     merchant_code = code_from_merchant_source_page_url(merchant_source_page_url)
@@ -80,7 +81,7 @@ class ShopzillaSource < Source
     logo_url = api.verified_logo_url(merchant_code)
     existing_merchant_source = MerchantSource.find_by_source_and_code(self, merchant_code)
     if existing_merchant_source.nil?
-      merchant_sources << MerchantSource.new({:source => self, :name => name, :code => merchant_code, :logo_url => logo_url})
+      merchant_sources << OpenStruct.new({:source => self, :name => name, :code => merchant_code, :logo_url => logo_url})
     else
       merchant_sources << existing_merchant_source
     end
@@ -91,7 +92,7 @@ class ShopzillaSource < Source
   end
 
   def source_product_id(product)
-    product.shopzilla_product_id.blank? ? nil : product.shopzilla_product_id
+    (product.shopzilla_product_id.nil? || product.shopzilla_product_id.empty?) ? nil : product.shopzilla_product_id
   end
 
   def nullify_offer_url(offer_url)

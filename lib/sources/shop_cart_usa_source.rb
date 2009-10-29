@@ -1,15 +1,16 @@
+require 'ostruct'
 require 'api_helpers/shop_cart_usa_api'
 
 class ShopCartUsaSource < Source
   def initialize
     super(:name => 'ShopCartUSA',
-          :keyname => 'SHOP_CART_USA',
           :homepage => 'http://www.shopcartusa.com/',
           :cpc => 45,
           :offer_enabled => true,
           :offer_ttl_seconds => 900,
           :use_for_merchant_ratings => false,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 1)
   end
   
@@ -24,7 +25,7 @@ class ShopCartUsaSource < Source
   def fetch_merchant_source(merchant_source_page_url)
     ShopCartUsaAPI.fetch_merchant_source(merchant_source_page_url)
     # ShopCartUSA does not have a merchant page to scrape to given their merchant ID (I know, lame)
-#    merchant_source = MerchantSource.new
+#    merchant_source = OpenStruct.new
 #    merchant_source.source = self
 #    merchant_source.code = merchant_source_page_url
 #    merchant_source.name = ''
@@ -36,7 +37,7 @@ class ShopCartUsaSource < Source
   end
 
   def source_product_id(product)
-    product.shopping_product_id.blank? ? nil : product.shopping_product_id
+    (product.shopping_product_id.nil? || product.shopping_product_id.empty?) ? nil : product.shopping_product_id
   end
 
   def nullify_offer_url(offer_url)

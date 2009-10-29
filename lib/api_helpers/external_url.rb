@@ -90,7 +90,7 @@ module ExternalUrl
 
   # Returns nil if the URL is a valid URI, else a message.  In this case, scheme, host and path are all required.
   def self.invalid_uri(url)
-    return 'No URL' if url.blank?
+    return 'No URL' if url.nil? || url.empty?
     begin
       uri = URI.safe_parse(url)
       if uri.nil? || uri.scheme.nil? || uri.host.nil? || uri.path.nil?

@@ -98,7 +98,7 @@ class ShopzillaAPI
     # now, we just need the number of reviews
     if rated
       num_merchant_reviews = safe_inner_text(merchant_element.at('Details/surveyCount'))
-      num_merchant_reviews = num_merchant_reviews.blank? ? 0 : num_merchant_reviews.to_i
+      num_merchant_reviews = (num_merchant_reviews.nil? || num_merchant_reviews.empty?) ? 0 : num_merchant_reviews.to_i
       merchant_source[:num_merchant_reviews] = num_merchant_reviews
     end
     merchant_source
@@ -216,15 +216,15 @@ class ShopzillaAPI
   end
 
   def is_likely_new_condition?(condition_text)
-    condition_text.blank? || condition_text.upcase == 'NEW' || condition_text.upcase == 'OEM'
+    condition_text.nil? || condition_text.empty? || condition_text.upcase == 'NEW' || condition_text.upcase == 'OEM'
   end
 
   def is_likely_in_stock?(stock_text)
-    stock_text.blank? || stock_text.upcase != 'OUT'
+    stock_text.nil? || stock_text.empty? || stock_text.upcase != 'OUT'
   end
 
   def get_price_from_node(element)
     price = element.attributes['integral']
-    price.blank? ? nil : (price.to_i / 100.0).to_d
+    (price.nil? || price.empty?) ? nil : (price.to_i / 100.0).to_d
   end
 end

@@ -66,7 +66,7 @@ module ShoppingAPI
       # list of shopping product ids to their associated product
       # useful to bring back the shopping_product_ids into products
       search_hash[:product_ids_hash] = search_hash[:products].inject({}) do |ha, product|
-        shopping_product_source = product.shopping_ids.detect{|product_source| !product_source.source_id.blank? && !product_source.questionable?}
+        shopping_product_source = product.shopping_ids.detect{|product_source| !product_source.questionable?}
         unless shopping_product_source.nil?
           shopping_id = shopping_product_source.source_id
           if ha.has_key?(shopping_id)
@@ -99,7 +99,7 @@ module ShoppingAPI
       misses, offers, product_infos = self.single_batch_search_v3(search_hash, sandbox)
       all_product_infos.update(product_infos)
       all_offers.update(offers)
-      missed_ids += misses unless misses.blank?
+      missed_ids += misses unless misses.empty?
     end
     
     # for the ones we missed, we're going to try looking them up one more time
@@ -112,7 +112,7 @@ module ShoppingAPI
         misses, offers, product_infos = self.single_batch_search_v3(search_hash, sandbox)
         all_product_infos.update(product_infos)
         all_offers.update(offers)
-        second_misses += misses unless misses.blank?
+        second_misses += misses unless misses.empty?
         offers = nil
         product_infos = nil
       end
@@ -120,7 +120,7 @@ module ShoppingAPI
     
     # only care to look up one-by-one if we're going to do something with the data
     # (for product lookups, then, to hide or update shopping ids)
-    if !second_misses.blank? && search_hash[:search_type] == SearchType::PRODUCT
+    if !second_misses.empty? && search_hash[:search_type] == SearchType::PRODUCT
       # missed again? gotta look up one-by-one!
       products_to_hide = []
       second_misses.each do |product_id|
@@ -129,7 +129,7 @@ module ShoppingAPI
         final_miss, offers, product_infos = self.single_batch_search_v3(search_hash, sandbox)
         all_product_infos.update(product_infos)
         all_offers.update(offers)
-        if !final_miss.blank?
+        if !final_miss.empty?
           puts "****** COULDN'T LOOK UP INFO FOR #{our_product_id} ( SHOPPING ID #{product_id}) !! Adding to hide queue..."
           products_to_hide << product_id
         else
@@ -216,7 +216,7 @@ module ShoppingAPI
     case search_hash[:search_type]
     when SearchType::PRODUCT, SearchType::SHOPPING_PRODUCT_ID
       search_hash[:batch_items].compact! # remove nils
-      if search_hash[:batch_items].blank?
+      if search_hash[:batch_items].empty?
         # nothing to look for! dummy.
         puts "NO PRODUCT ID PASSED!"
         # return blanks
@@ -233,7 +233,7 @@ module ShoppingAPI
         'keyword' => Array(search_hash[:keywords].collect{|x| CGI::escape(x) }), # can be an array, thass coo' wit me.
         'showProductOffers' => true,
         'pageNumber' => 1,
-        'numItems' => search_hash[:num_items].blank? ? 1 : search_hash[:num_items],
+        'numItems' => (search_hash[:num_items].nil? || search_hash[:num_items].to_s.empty?) ? 1 : search_hash[:num_items],
         # 'productSortType' => 'price',
         # 'productSortOrder' => 'asc'
       }
@@ -299,10 +299,10 @@ module ShoppingAPI
         product_infos[product_id][:name] = product.at('name').innerText
         
         try_description = product.at('fullDescription').innerText
-        if try_description.blank?
+        if try_description.nil? || try_description.empty?
           try_description = product.at('shortDescription').innerText
         end
-        product_infos[product_id][:description] = try_description.blank? ? '' : try_description[0...255]
+        product_infos[product_id][:description] = (try_description.nil? || try_description.empty?) ? '' : try_description[0...255]
           
         images = (product / 'images' / 'image[@available="true"]').collect{|x|
           {
@@ -496,10 +496,10 @@ module ShoppingAPI
   end
 
   def self.to_i_or_nil(value)
-    value.blank? ? nil : value.strip.to_i rescue nil
+    value.nil? ? nil : value.strip.to_i rescue nil
   end
 
   def self.to_d_or_nil(value)
-    value.blank? ? nil : BigDecimal(value.strip) rescue nil
+    value.nil? ? nil : BigDecimal(value.strip) rescue nil
   end
 end

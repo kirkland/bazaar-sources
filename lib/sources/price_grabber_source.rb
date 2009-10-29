@@ -1,13 +1,15 @@
+require 'ostruct'
+
 class PriceGrabberSource < Source
   def initialize
     super(:name => 'PriceGrabber',
-          :keyname => 'PRICE_GRABBER',
           :homepage => ' http://www.pricegrabber.com/',
           :cpc => 0,
           :offer_enabled => false,
           :offer_ttl_seconds => 0,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 2)
   end
   
@@ -23,7 +25,7 @@ class PriceGrabberSource < Source
     delay_fetch
     doc = Hpricot(open(merchant_source_page_url))
 
-    merchant_source = MerchantSource.new
+    merchant_source = OpenStruct.new
     merchant_source.source = self
 
     merchant_identity_block = doc.at('div#merchantIdentityBlock')

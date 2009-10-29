@@ -7,13 +7,13 @@ class EbaySource < Source
 
   def initialize
     super(:name => 'eBay.com',
-          :keyname => 'EBAY',
           :homepage => 'http://www.ebay.com/',
           :cpc => 10,
           :offer_enabled => false,
           :offer_ttl_seconds => 86400,
           :use_for_merchant_ratings => false,
           :offer_affiliate => true,
+          :supports_lifetime_ratings => false,
           :batch_fetch_delay => 2)
   end
   
