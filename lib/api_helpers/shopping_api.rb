@@ -194,7 +194,8 @@ module ShoppingAPI
         :images => {},
         :manufacturer => nil,
         :name => nil,
-        :description => nil
+        :description => nil,
+        :review_url => nil
       })
     else # even if they don't ask for it! BAM!
       product_infos = Hash.new({
@@ -297,6 +298,7 @@ module ShoppingAPI
       }
       if search_hash[:get_extra_product_info]
         product_infos[product_id][:name] = product.at('name').innerText
+        product_infos[product_id][:review_url] = (product.at('reviewURL').innerText rescue nil)
         
         try_description = product.at('fullDescription').innerText
         if try_description.nil? || try_description.empty?
