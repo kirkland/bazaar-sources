@@ -139,6 +139,14 @@ module AmazonAPI
     offers
   end
 
+  def self.find_product_reviews_by_id(asin)
+    request = {'Operation' => 'ItemLookup',
+               'ResponseGroup' => 'Reviews',
+               'ItemId' => asin.strip,
+               'IdType' => 'ASIN'}
+    res = make_amazon_api_request request
+  end
+  
   def self.find_product_by_id(asin)
     request = {'Operation' => 'ItemLookup',
                'ResponseGroup' => 'Medium',
@@ -478,6 +486,10 @@ module AmazonAPI
     Hpricot(body)
   end
 
+  def self.cache
+    @cache ||= (eval('CACHE') rescue nil)
+  end
+  
   # make any API request given a hash of querystring parameters
   def self.make_amazon_api_request(user_params)
     params = {'Service' => 'AWSECommerceService',
@@ -493,12 +505,12 @@ module AmazonAPI
 
     # do we already have a cached version of this API call?
     key = "amazon-api-#{Digest::MD5.hexdigest(query_string)}-v2"
-    result = CACHE.get(key)
+    result = cache ? cache.get(key) : nil
     if !result # nope.. gotta get a new one.
       url = sign_url('ecs.amazonaws.com', '/onca/xml', params)
       # shoot off the request
       result = do_api_request(url)
-      CACHE.set(key, result, Source.amazon_source.offer_ttl_seconds) # 1 hour
+      cache.set(key, result, Source.amazon_source.offer_ttl_seconds) if cache # 1 hour
     end
     Hpricot.XML(result)
   end
