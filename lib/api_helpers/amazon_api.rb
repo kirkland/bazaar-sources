@@ -139,12 +139,12 @@ module AmazonAPI
     offers
   end
 
-  def self.find_product_reviews_by_id(asin)
+  def self.find_product_review_info_by_id_raw(asin)
     request = {'Operation' => 'ItemLookup',
                'ResponseGroup' => 'Reviews',
                'ItemId' => asin.strip,
                'IdType' => 'ASIN'}
-    res = make_amazon_api_request request
+    make_amazon_api_request_raw request
   end
   
   def self.find_product_by_id(asin)
