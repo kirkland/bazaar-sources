@@ -6,7 +6,7 @@ class ShopCartUsaSource < Source
     super(:name => 'ShopCartUSA',
           :homepage => 'http://www.shopcartusa.com/',
           :cpc => 45,
-          :offer_enabled => true,
+          :offer_enabled => false,
           :offer_ttl_seconds => 900,
           :use_for_merchant_ratings => false,
           :offer_affiliate => false,
