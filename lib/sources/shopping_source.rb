@@ -103,17 +103,13 @@ class ShoppingSource < Source
     '%01.1f/5.0' % (merchant_source.get_merchant_rating.to_f / 20.0)
   end
 
-  def source_product_id(product)
-    (product.shopping_product_id.nil? || product.shopping_product_id.empty?) ? nil : product.shopping_product_id
-  end
-
   def nullify_offer_url(offer_url)
     offer_url.gsub(/8039097/, '8039098')
   end
 
-  def fetch_street_price(product)
+  def fetch_street_price(product_source_codes)
     delay_fetch
-    offers = fetch_product_offers(product)
+    offers = fetch_offers(product_source_codes)
     num_offers = 0
     total_prices = 0.0
     offers.each do |offer|
@@ -128,7 +124,11 @@ class ShoppingSource < Source
     num_offers.zero? ? nil : (total_prices / num_offers)
   end
 
-  def fetch_product_offers(product)
-    ShoppingAPI.batch_search_v3({:search_type => ShoppingAPI::SearchType::PRODUCT, :products => [product]}).first[product.id]
+  def fetch_offers(product_source_codes)
+    # Holy shit!  This is one fucked up function. Anyway, I need to get in there and
+    # remove its reliance on Product and ProductSource yet still support updates to
+    # product codes and also flagging ones that aren't found or produce an error.
+    #ShoppingAPI.batch_search_v3({:search_type => ShoppingAPI::SearchType::PRODUCT, :products => [product]}).first[product.id]
+    []
   end
 end

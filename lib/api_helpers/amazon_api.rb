@@ -33,7 +33,7 @@ module AmazonAPI
     [unformatted_price, formatted_price]
   end
   
-  def self.findOffersByASIN(asin, featured_merchants_only=false)
+  def self.find_offers_by_product_id_via_api(asin, featured_merchants_only=false)
     asin.strip!
     request = {'Operation' => 'ItemLookup',
                'ResponseGroup' => 'Large,OfferFull',
@@ -122,15 +122,13 @@ module AmazonAPI
   end
 
   def fetch_all_new_offers_hash(product)
-    findOffersForProduct(product, false)
+    find_offers_by_product_id(product, false)
   end
 
-  def self.findOffersForProduct(product, featured_merchants_only=false)
+  def self.find_offers_by_product_id(product_source_codes, featured_merchants_only=false)
     offer_array = []
-    product.amazon_asins.each do |product_source|
-      unless product_source.questionable?
-        offer_array << scrape_offer_listing_page_to_hash(product_source.source_id, featured_merchants_only)
-      end
+    product_source_codes.each do |asin|
+      offer_array << scrape_offer_listing_page_to_hash(asin, featured_merchants_only)
     end
     offers = {}
     offer_array.each do |ha|
@@ -141,7 +139,7 @@ module AmazonAPI
     offers
   end
 
-  def self.findProductByASIN(asin)
+  def self.find_product_by_id(asin)
     request = {'Operation' => 'ItemLookup',
                'ResponseGroup' => 'Medium',
                'ItemId' => asin.strip,
@@ -197,9 +195,9 @@ module AmazonAPI
     product
   end
 
-  def self.itemSearch(searchTerms)
+  def self.item_search(search_terms)
     request = {'Operation' => 'ItemSearch',
-               'Keywords' => searchTerms,
+               'Keywords' => search_terms,
                'SearchIndex' => 'All',
                'ResponseGroup' => 'Images,ItemAttributes'}
     res = make_amazon_api_request request
@@ -291,7 +289,7 @@ module AmazonAPI
     offers_hash = {}
     offers = scrape_offer_listing_page(asin, featured_merchants_only)
     offers.each do |offer|
-      offers_hash[offer.merchant_code] = offer
+      offers_hash[offer[:merchant_code]] = offer
     end
     offers_hash
   end

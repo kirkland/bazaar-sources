@@ -36,18 +36,13 @@ class ShopCartUsaSource < Source
     merchant_source.get_merchant_rating
   end
 
-  def source_product_id(product)
-    (product.shopping_product_id.nil? || product.shopping_product_id.empty?) ? nil : product.shopping_product_id
-  end
-
   def nullify_offer_url(offer_url)
     offer_url.gsub(/s=id1/, 's=id0')
   end
 
-  def fetch_product_offers(product)
-    source_product_id = source_product_id(product)
-    unless source_product_id.nil?
-      ShopCartUsaAPI::find_offers_by_product_id(source_product_id)
+  def fetch_offers(product_source_codes)
+    unless product_source_codes.empty?
+      ShopCartUsaAPI::find_offers_by_product_id(product_source_codes.first)
     else
       []
     end

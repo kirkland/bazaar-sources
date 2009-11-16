@@ -107,15 +107,11 @@ class Source
     "#{merchant_source.get_merchant_rating}%"
   end
 
-  def source_product_id(product)
-    nil
-  end
-
   def nullify_offer_url(offer_url)
     offer_url
   end
 
-  def fetch_product_offers(product)
+  def fetch_offers(product_source_codes)
     nil
   end
 

@@ -91,10 +91,6 @@ class ShopzillaSource < Source
     '%01.1f/10' % (merchant_source.get_merchant_rating.to_f / 10.0)
   end
 
-  def source_product_id(product)
-    (product.shopzilla_product_id.nil? || product.shopzilla_product_id.empty?) ? nil : product.shopzilla_product_id
-  end
-
   def nullify_offer_url(offer_url)
     offer_url.gsub(/af_id=3973/, 'af_id=3233')
   end
@@ -103,13 +99,11 @@ class ShopzillaSource < Source
     @api ||= ShopzillaAPI.new
   end
 
-  def fetch_product_offers(product)
-    source_product_id = source_product_id(product)
-    unless source_product_id.nil?
-      api.find_offers_by_product_id(source_product_id)
+  def fetch_offers(product_source_codes)
+    unless product_source_codes.empty?
+      api.find_offers_by_product_id(product_source_codes.first)
     else
       []
     end
   end
-  
 end

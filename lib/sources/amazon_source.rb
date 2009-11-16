@@ -36,14 +36,9 @@ class AmazonSource < Source
       :homepage => properties[:homepage] }
   end
   
-  # fake it.
-  def source_product_id(product)
-    product.amazon_asins.empty? ? nil : product.amazon_asins.first.source_id
-  end
-
-  def fetch_best_offer(product, min_num_offers_to_qualify=nil)
+  def fetch_best_offer(product_source_codes, min_num_offers_to_qualify=nil)
     delay_fetch
-    offers = fetch_product_offers(product)
+    offers = fetch_offers(product_source_codes)
     if !min_num_offers_to_qualify.nil? && offers.length < min_num_offers_to_qualify
       return nil
     end
@@ -57,8 +52,8 @@ class AmazonSource < Source
     end
   end
 
-  def fetch_street_price(product)
-    best_offer = fetch_best_offer(product, 3)
+  def fetch_street_price(product_source_codes)
+    best_offer = fetch_best_offer(product_source_codes, 3)
     best_offer.nil? ? nil : best_offer.total_price
   end
 
@@ -78,7 +73,7 @@ class AmazonSource < Source
     nullify ? nullify_offer_url(deal_url) : deal_url
   end
 
-  def fetch_product_offers(product)
-    AmazonAPI::findOffersForProduct(product).values
+  def fetch_offers(product_source_codes)
+    AmazonAPI::find_offers_by_product_id(product_source_codes).values
   end
 end
