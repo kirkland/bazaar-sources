@@ -492,6 +492,13 @@ module AmazonAPI
   
   # make any API request given a hash of querystring parameters
   def self.make_amazon_api_request(user_params)
+    result = make_amazon_api_request_raw(user_params)
+    result ? Hpricot.XML(result) : nil
+  end
+
+  # make API request, but don't process through Hpricot so called can
+  # process (with, say, Nokogiri)
+  def self.make_amazon_api_request_raw(user_params)
     params = {'Service' => 'AWSECommerceService',
               'Version' => '2007-07-16',
               'AWSAccessKeyId' => AMAZON_ACCESS_KEY_ID}
@@ -512,7 +519,7 @@ module AmazonAPI
       result = do_api_request(url)
       cache.set(key, result, Source.amazon_source.offer_ttl_seconds) if cache # 1 hour
     end
-    Hpricot.XML(result)
+    result
   end
 
   # create the Net::HTTP object to actually do the request
