@@ -1,0 +1,85 @@
+# Query used to generate this config file
+#SELECT keyname || ':\n'
+#       '  name: ' || coalesce(name, '') || '\n'
+#       '  mappable: ' || mappable || '\n'
+#       '  for_offers: ' || foroffers || '\n'
+#       '  for_product_info: ' || forproductinfo || '\n'
+#       '  for_review_aggregates: ' || forreviewaggregates || '\n'
+#       '  search_url: ' || coalesce(searchurl, '') || '\n'
+#       '  search_token_separator: ' || coalesce(searchtokenseparator, '') || '\n'
+#       '  review_parser_status: ' || coalesce(reviewparserstatus, '') || '\n\n'
+#FROM sources
+#WHERE keyname IN (
+#'newegg',
+#'circuit-city',
+#'cnet',
+#'nextag',
+#'photography-review',
+#'yahoo-shopping'
+#)
+#ORDER BY keyname;
+
+circuit-city:
+  name: Circuit City
+  mappable: true
+  for_offers: false
+  for_product_info: false
+  for_review_aggregates: true
+  search_url: http://www.circuitcity.com/ccd/Search.do?c=1&searchSection=All&&keyword=!placeholder!
+  search_token_separator: +
+  review_parser_status: BROKEN
+
+
+cnet:
+  name: CNET
+  mappable: true
+  for_offers: false
+  for_product_info: false
+  for_review_aggregates: true
+  search_url: http://cnet.search.com/search?chkpt=astg.cnet.fd.search.cnet&q=!placeholder!
+  search_token_separator: +
+  review_parser_status: OK
+
+
+newegg:
+  name: Newegg
+  mappable: true
+  for_offers: false
+  for_product_info: false
+  for_review_aggregates: true
+  search_url: http://www.newegg.com/Product/ProductList.asp?DEPA=0&type=&Description=!placeholder!&Submit=ENE&N=0&Ntk=all
+  search_token_separator: +
+  review_parser_status: OK
+
+
+nextag:
+  name: NexTag
+  mappable: true
+  for_offers: false
+  for_product_info: false
+  for_review_aggregates: true
+  search_url: http://www.nextag.com/blah/search-html?search=!placeholder!
+  search_token_separator: +
+  review_parser_status: OK
+
+
+photography-review:
+  name: Photography Review
+  mappable: false
+  for_offers: false
+  for_product_info: false
+  for_review_aggregates: false
+  search_url: http://www.photographyreview.com/befid-449/keyword-!placeholder!/searchcrx.aspx
+  search_token_separator: %20
+  review_parser_status:
+
+
+yahoo-shopping:
+  name: Yahoo! Shopping
+  mappable: true
+  for_offers: false
+  for_product_info: false
+  for_review_aggregates: true
+  search_url: http://shopping.yahoo.com/search?p=!placeholder!&did=59
+  search_token_separator: +
+  review_parser_status: OK

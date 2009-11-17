@@ -6,6 +6,7 @@ class Source
   attr_reader :cpc
   attr_reader :offer_enabled
   alias :offer_enabled? :offer_enabled 
+  alias :for_offers :offer_enabled
   attr_reader :offer_ttl_seconds
   attr_reader :use_for_merchant_ratings
   alias :use_for_merchant_ratings? :use_for_merchant_ratings
@@ -15,6 +16,14 @@ class Source
   alias :supports_lifetime_ratings? :supports_lifetime_ratings
   attr_reader :batch_fetch_delay
 
+  # properties from the legacy Source table in DA/DCHQ
+  attr_reader :mappable
+  attr_reader :for_product_info
+  attr_reader :for_review_aggregates
+  attr_reader :search_url
+  attr_reader :search_token_separator
+  attr_reader :review_parser_status
+
   @@subclasses = []
   @@sources = Set.new
   @@sources_map = {}
@@ -22,12 +31,22 @@ class Source
   @@affiliate_sources = []
   @@merchant_rating_sources = []
 
+  SIMPLE_SOURCES_YAML_FILE = File.join(File.dirname(__FILE__), '/simple_sources.yml')
+
   class << self
     @keyname = nil
   end
 
   def self.keyname
-    @keyname ||= self.name.match(/(.+)Source/)[1]
+    if @keyname.nil?
+      matches = self.name.match(/(.+)Source/)
+      @keyname = matches[1].gsub(/([a-z\d])([A-Z])/,'\1-\2').downcase unless matches.nil?
+    end
+    @keyname
+  end
+
+  def self.keyname=(keyname)
+    @keyname = keyname
   end
 
   def self.inherited(child)
@@ -81,7 +100,7 @@ class Source
   def self.method_missing(meth)
     source = nil
     if matches = meth.to_s.match(/(.+)_source$/)
-      source_keyname = matches[1].gsub(/(?:^|_)(.)/) { $1.upcase }
+      source_keyname = matches[1].gsub('_', '-')
       source = send(:source, source_keyname)
     end
     source.nil? ? super : source
@@ -131,7 +150,7 @@ class Source
 
   def self.set_source_keyname_const(source_keyname)
     unless source_keyname.nil? || source_keyname.empty?
-      const_name = source_keyname.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr('-', '_').upcase + '_KEYNAME'
+      const_name = source_keyname.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr('-~', '_').upcase + '_KEYNAME'
       const_set(const_name.to_sym, source_keyname)
     end
   end
@@ -143,9 +162,34 @@ class Source
         @@sources << source_instance
         @@sources_map[source_instance.keyname] = source_instance
       end
+      load_simple_sources.each do |source_instance|
+        @@sources << source_instance
+        @@sources_map[source_instance.keyname] = source_instance
+      end
       @@sources.sort{|a,b| a.name <=> b.name}
     end
     nil
+  end
+
+  def self.load_simple_sources
+    simple_sources = []
+    simple_sources_map = YAML.load_file(SIMPLE_SOURCES_YAML_FILE)
+    simple_sources_map.each do |source_keyname, source_attributes|
+      const_name = source_keyname.gsub(/(?:^|[-_~])(.)/) { $1.upcase } + 'Source'
+      simple_source_class = Object.const_set(const_name, Class.new(Source))
+      simple_source_class.keyname = source_keyname
+      set_source_keyname_const(source_keyname)
+      source = simple_source_class.new(:name => source_attributes['name'],
+                                       :offer_enabled => source_attributes['for_offers'] == 'true',
+                                       :mappable => source_attributes['mappable'] == 'true',
+                                       :for_product_info => source_attributes['for_product_info'] == 'true',
+                                       :for_review_aggregates => source_attributes['for_review_aggregates'] == 'true',
+                                       :search_url => source_attributes['search_url'],
+                                       :search_token_separator => source_attributes['search_token_separator'],
+                                       :review_parser_status => source_attributes['review_parser_status'])
+      simple_sources << source
+    end
+    simple_sources
   end
 
   def delay_fetch

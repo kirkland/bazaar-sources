@@ -16,6 +16,7 @@ lib/sources/reseller_ratings_source.rb
 lib/sources/shop_cart_usa_source.rb
 lib/sources/shopping_source.rb
 lib/sources/shopzilla_source.rb
+lib/sources/simple_sources.yml
 lib/sources/source.rb
 Manifest.txt
 Rakefile
