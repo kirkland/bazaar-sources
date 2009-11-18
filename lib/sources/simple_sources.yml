@@ -74,17 +74,6 @@ photography-review:
   review_parser_status:
 
 
-pricegrabber:
-  name: PriceGrabber
-  mappable: false
-  for_offers: false
-  for_product_info: false
-  for_review_aggregates: false
-  search_url: http://www.pricegrabber.com/search.php?form_keyword=!placeholder!
-  search_token_separator: +
-  review_parser_status:
-
-
 yahoo-shopping:
   name: Yahoo! Shopping
   mappable: true
