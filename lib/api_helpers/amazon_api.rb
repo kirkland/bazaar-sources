@@ -365,14 +365,13 @@ module AmazonAPI
         price = price_to_f(price_element.inner_text)
       end
       add_to_cart_span = row.at("td/span[text() *= 'Add to cart to see price.']")
+      add_to_cart_span = row.at("td/span[text() *= 'Price not displayed.']") if add_to_cart_span.nil?
       if add_to_cart_span && !offer_listing_id.nil? && !offer_listing_id.empty?
         price = price_to_f(reveal_too_low_to_display_price_from_offer_listing_id(offer_listing_id).second)
         added_to_cart = true
       end
       if price.nil?
-        ExceptionNotifier.notify(:error_class => 'AmazonAPI Error',
-                                 :error_message => 'Failed to find price while scraping the offer listing page.',
-                                 :request => { :params => {:asin => asin, :featured_merchants => featured_merchants, :row => row.inner_text }})
+        puts "Failed to find offer price while scraping the offer listing page; ASIN: #{asin}.  Skipping."
         next
       end
 
@@ -420,9 +419,7 @@ module AmazonAPI
           end
         end
         if seller_id.nil?
-          ExceptionNotifier.notify(:error_class => 'AmazonAPI Error',
-                                   :error_message => 'Failed to find seller_id while scraping the offer listing page.',
-                                   :request => { :params => {:asin => asin, :featured_merchants => featured_merchants, :seller_info => seller_info.inner_text }})
+          puts "Failed to find seller_id while scraping the offer listing page; ASIN: #{asin}, seller info: #{seller_info.inner_html}"
           next
         end
 

@@ -229,7 +229,7 @@ module ShoppingAPI
         'productId' => search_hash[:batch_items],
         'showProductOffers' => true,
         'trackingId' => search_hash[:tracking_id],
-        'numOffersPerProduct' => 20
+        'numItems' => 20
       }
     when SearchType::KEYWORDS
       params = {
@@ -237,6 +237,7 @@ module ShoppingAPI
         'keyword' => Array(search_hash[:keywords].collect{|x| CGI::escape(x) }), # can be an array, thass coo' wit me.
         'showProductOffers' => true,
         'trackingId' => search_hash[:tracking_id],
+        'numOffersPerProduct' => 20,
         'pageNumber' => 1,
         'numItems' => (search_hash[:num_items].nil? || search_hash[:num_items].to_s.empty?) ? 1 : search_hash[:num_items],
         # 'productSortType' => 'price',
