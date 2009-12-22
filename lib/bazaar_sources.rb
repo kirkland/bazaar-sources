@@ -10,7 +10,7 @@ require 'sources/shopping_source'
 require 'sources/shopzilla_source'
 
 module BazaarSources
-  VERSION = '0.0.5'
+  VERSION = '0.0.6'
 end
 
 module URI
