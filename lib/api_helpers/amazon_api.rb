@@ -20,6 +20,11 @@ module AmazonAPI
     "http://www.amazon.com/gp/offer-listing/#{asin}?condition=new"
   end
 
+  def self.accessories_url(asin)
+    accessories_url = "http://www.amazon.com/dp/accessories/#{asin}/#accessories"
+    "http://www.amazon.com/gp/redirect.html?ie=UTF8&tag=#{associate_tag}&linkCode=ur2&camp=1789&creative=9325&location=#{CGI::escape(accessories_url)}"
+  end
+
   # reveal a too low to display price by adding it to the cart
   # returns the amount (in pennies) and the formatted price
   def self.reveal_too_low_to_display_price_from_offer_listing_id offer_listing_id
