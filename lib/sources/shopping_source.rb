@@ -1,5 +1,5 @@
 require 'ostruct'
-require 'api_helpers/shopping_api'
+require 'api_helpers/shopping'
 
 class ShoppingSource < Source
   def initialize
@@ -13,7 +13,11 @@ class ShoppingSource < Source
           :supports_lifetime_ratings => false,
           :batch_fetch_delay => 2)
   end
-  
+
+  def api
+    @api = Shopping::Publisher.new
+  end
+
   def url_for_merchant_source_page(merchant_source_code)
     "http://www.shopping.com/xMR-~MRD-#{merchant_source_code}"
   end
@@ -124,11 +128,7 @@ class ShoppingSource < Source
     num_offers.zero? ? nil : (total_prices / num_offers)
   end
 
-  def fetch_offers(product_source_codes)
-    # Holy shit!  This is one fucked up function. Anyway, I need to get in there and
-    # remove its reliance on Product and ProductSource yet still support updates to
-    # product codes and also flagging ones that aren't found or produce an error.
-    #ShoppingAPI.batch_search_v3({:search_type => ShoppingAPI::SearchType::PRODUCT, :products => [product]}).first[product.id]
-    []
+  def fetch_offers(product_code)
+    api.fetch_offers(product_code)
   end
 end

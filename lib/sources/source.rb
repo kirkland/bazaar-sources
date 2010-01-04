@@ -5,7 +5,7 @@ class Source
   attr_reader :homepage
   attr_reader :cpc
   attr_reader :offer_enabled
-  alias :offer_enabled? :offer_enabled 
+  alias :offer_enabled? :offer_enabled
   alias :for_offers :offer_enabled
   attr_reader :offer_ttl_seconds
   attr_reader :use_for_merchant_ratings
@@ -31,7 +31,7 @@ class Source
   @@affiliate_sources = []
   @@merchant_rating_sources = []
 
-  SIMPLE_SOURCES_YAML_FILE = File.join(File.dirname(__FILE__), '/simple_sources.yml')
+  SIMPLE_SOURCES_YAML_FILE = File.join(File.dirname(__FILE__), 'simple_sources.yml')
 
   class << self
     @keyname = nil

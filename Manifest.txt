@@ -1,8 +1,11 @@
 History.txt
 lib/api_helpers/amazon_api.rb
+lib/api_helpers/api_helper.rb
 lib/api_helpers/external_url.rb
+lib/api_helpers/httparty_nokogiri_parser.rb
 lib/api_helpers/reseller_ratings_api.rb
-lib/api_helpers/shopping_api.rb
+lib/api_helpers/shopping.rb
+lib/api_helpers/shopping_bulk_api.rb
 lib/api_helpers/shopzilla_api.rb
 lib/bazaar_sources.rb
 lib/sources/amazon_source.rb

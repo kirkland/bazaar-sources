@@ -6,7 +6,7 @@ class ShopzillaSource < Source
     super(:name => 'Shopzilla',
           :homepage => 'http://www.shopzilla.com/',
           :cpc => 39,
-          :offer_enabled => true,
+          :offer_enabled => false,
           :offer_ttl_seconds => 1800,
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,

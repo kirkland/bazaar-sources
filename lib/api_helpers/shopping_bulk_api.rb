@@ -1,4 +1,4 @@
-module ShoppingAPI
+module ShoppingBulkAPI
   require 'hpricot'
   require 'open-uri'
   require 'cgi'
@@ -51,10 +51,10 @@ module ShoppingAPI
   
   # batch lookup products
   # takes a search hash, which should have a :search_type key (one member from SearchType Enum above)
-  # for searching products, pass an array of products in :products (:search_type => ShoppingAPI::SearchType::PRODUCT)
-  # for searching from shopping product ids, pass an array of shopping product ids in :shopping_product_ids (:search_type => ShoppingAPI::SearchType::SHOPPING_PRODUCT_ID)
+  # for searching products, pass an array of products in :products (:search_type => ShoppingBulkAPI::SearchType::PRODUCT)
+  # for searching from shopping product ids, pass an array of shopping product ids in :shopping_product_ids (:search_type => ShoppingBulkAPI::SearchType::SHOPPING_PRODUCT_ID)
   # for those two above, you can pass :batch_lookup, which is how many we should look up w/ shopping at once
-  # for searching a keyword, pass a :keywords array of strings (any you want to be included in results, ordered) (:search_type => ShoppingAPI::SearchType::KEYWORDS)
+  # for searching a keyword, pass a :keywords array of strings (any you want to be included in results, ordered) (:search_type => ShoppingBulkAPI::SearchType::KEYWORDS)
   def self.batch_search_v3(search_hash, sandbox=false)  
     search_hash[:batch_lookup] ||= 20
     
