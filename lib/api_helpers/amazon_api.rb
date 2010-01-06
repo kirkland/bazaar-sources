@@ -1,7 +1,7 @@
 require 'hpricot'
 require 'open-uri'
 require 'cgi'
-require 'hmac-sha2'
+require 'digest/sha2'
 
 module AmazonAPI
   def self.associate_tag
@@ -582,7 +582,7 @@ module AmazonAPI
 
     query = "GET\n#{host}\n#{path}\n#{params_string}"
 
-    hmac = HMAC::SHA256.digest(AMAZON_SECRET_ACCESS_KEY, query)
+    hmac = Digest::HMAC.new(AMAZON_SECRET_ACCESS_KEY, Digest::SHA256).digest(query)
     base64_hmac = Base64.encode64(hmac).chomp
     signature = CGI::escape(base64_hmac)
     "http://#{host}#{path}?#{params_string}&Signature=#{signature}"

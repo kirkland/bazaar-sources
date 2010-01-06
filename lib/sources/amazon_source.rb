@@ -74,6 +74,6 @@ class AmazonSource < Source
   end
 
   def fetch_offers(product_source_codes)
-    AmazonAPI::find_offers_by_product_id(product_source_codes).values
+    AmazonAPI::find_offers_by_product_id([product_source_codes]).values
   end
 end

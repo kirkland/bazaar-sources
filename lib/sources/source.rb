@@ -38,7 +38,7 @@ class Source
   end
 
   def self.keyname
-    if @keyname.nil?
+    if @keyname.nil? && !self.name.nil?
       matches = self.name.match(/(.+)Source/)
       @keyname = matches[1].gsub(/([a-z\d])([A-Z])/,'\1-\2').downcase unless matches.nil?
     end
