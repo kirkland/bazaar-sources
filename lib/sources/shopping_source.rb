@@ -108,7 +108,7 @@ class ShoppingSource < Source
   end
 
   def nullify_offer_url(offer_url)
-    offer_url.gsub(/8039097/, '8039098')
+    offer_url.gsub(/3068547/, '8039098')
   end
 
   def fetch_street_price(product_source_codes)
