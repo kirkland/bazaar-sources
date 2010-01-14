@@ -22,6 +22,7 @@ module Shopping
     default_params 'trackingId' => '3068547', 'apiKey' => '21e3f349-c5f4-4783-8354-6ff75371ae22'
 
     MAX_OFFERS = 20
+    PUTS_API_URL = false
 
     def fetch_product(product_id, include_specs=false, include_offers=false)
       # Won't get psuedo-redirected to new product ID unless we request at least one offer (very strange)
@@ -51,6 +52,10 @@ module Shopping
     protected
 
     def call_api(path, options, &block)
+      if PUTS_API_URL
+        merged_options = self.class.default_options.dup.merge(options)
+        puts "Shopping.com API URL: #{HTTParty::Request.new(Net::HTTP::Get, path, merged_options).uri}"
+      end
       doc = self.class.get(path, options)
       errors = get_errors(doc)
       if errors.empty?
@@ -132,8 +137,10 @@ module Shopping
     end
 
     def convert_offers_collection_node(offers_collection_node)
+      offer_nodes = offers_collection_node.nil? ? nil : offers_collection_node.search('offer')
+      return [] if offer_nodes.nil?
       offers = {}
-      offers_collection_node.search('offer').each_with_index do |offer, offer_index|
+      offer_nodes.each_with_index do |offer, offer_index|
         # in-stock
         stock_status = offer.at('stockStatus').text
         in_stock = stock_status != 'out-of-stock' && stock_status != 'back-order'
