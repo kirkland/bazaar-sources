@@ -14,7 +14,9 @@ class EbaySource < Source
           :use_for_merchant_ratings => false,
           :offer_affiliate => true,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 2)
+          :batch_fetch_delay => 2,
+          :product_code_regexp => nil,
+          :product_code_examples => [])
   end
   
   def nullify_offer_url(offer_url)

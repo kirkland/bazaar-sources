@@ -1,34 +1,14 @@
-# Query used to generate this config file
-#SELECT keyname || ':\n'
-#       '  name: ' || coalesce(name, '') || '\n'
-#       '  mappable: ' || mappable || '\n'
-#       '  for_offers: ' || foroffers || '\n'
-#       '  for_product_info: ' || forproductinfo || '\n'
-#       '  for_review_aggregates: ' || forreviewaggregates || '\n'
-#       '  search_url: ' || coalesce(searchurl, '') || '\n'
-#       '  search_token_separator: ' || coalesce(searchtokenseparator, '') || '\n'
-#       '  review_parser_status: ' || coalesce(reviewparserstatus, '') || '\n\n'
-#FROM sources
-#WHERE keyname IN (
-#'newegg',
-#'circuit-city',
-#'cnet',
-#'nextag',
-#'photography-review',
-#'yahoo-shopping'
-#)
-#ORDER BY keyname;
-
 circuit-city:
   name: Circuit City
   mappable: true
   for_offers: false
   for_product_info: false
   for_review_aggregates: true
-  search_url: http://www.circuitcity.com/ccd/Search.do?c=1&searchSection=All&&keyword=!placeholder!
-  search_token_separator: +
-  review_parser_status: BROKEN
-
+  search_url:
+  search_token_separator:
+  product_code_regexp: ^\d{7}$
+  product_code_examples: ['4497835', '5007270']
+  product_page_link_erb: http://www.circuitcity.com/applications/SearchTools/item-details.asp?EdpNo=<%= product_code %>
 
 cnet:
   name: CNET
@@ -38,8 +18,9 @@ cnet:
   for_review_aggregates: true
   search_url: http://cnet.search.com/search?chkpt=astg.cnet.fd.search.cnet&q=!placeholder!
   search_token_separator: +
-  review_parser_status: OK
-
+  product_code_regexp: ^\d{4}-\d{4}_\d-\d{7,8}$
+  product_code_examples: ['4852-6501_7-9666631', '4505-6501_7-33765912']
+  product_page_link_erb: http://www.cnet.com/<%= product_code %>.html
 
 newegg:
   name: Newegg
@@ -49,8 +30,9 @@ newegg:
   for_review_aggregates: true
   search_url: http://www.newegg.com/Product/ProductList.asp?DEPA=0&type=&Description=!placeholder!&Submit=ENE&N=0&Ntk=all
   search_token_separator: +
-  review_parser_status: OK
-
+  product_code_regexp: ^[A-Z0-9]{4}\d{11}$
+  product_code_examples: ['N82E16830111260', 'N82E16830144222']
+  product_page_link_erb: http://www.newegg.com/Product/Product.aspx?Item=<%= product_code %>
 
 nextag:
   name: NexTag
@@ -60,8 +42,9 @@ nextag:
   for_review_aggregates: true
   search_url: http://www.nextag.com/blah/search-html?search=!placeholder!
   search_token_separator: +
-  review_parser_status: OK
-
+  product_code_regexp: ^\d{8,9}$
+  product_code_examples: ['560328520', '656751324']
+  product_page_link_erb: http://www.nextag.com/<%= product_code %>/prices-html
 
 photography-review:
   name: Photography Review
@@ -71,8 +54,9 @@ photography-review:
   for_review_aggregates: false
   search_url: http://www.photographyreview.com/befid-449/keyword-!placeholder!/searchcrx.aspx
   search_token_separator: %20
-  review_parser_status:
-
+  product_code_regexp:
+  product_code_examples: ['casio_exz550', 'canon_eos1dmkiv']
+  product_page_link_erb: http://www.dpreview.com/reviews/specs/Canon/<%= product_code %>.asp
 
 yahoo-shopping:
   name: Yahoo! Shopping
@@ -82,4 +66,6 @@ yahoo-shopping:
   for_review_aggregates: true
   search_url: http://shopping.yahoo.com/search?p=!placeholder!&did=59
   search_token_separator: +
-  review_parser_status: OK
+  product_code_regexp: ^\d{10}$
+  product_code_examples: ['1993713221', '2002987863']
+  product_page_link_erb: http://shopping.yahoo.com/p:-:<%= product_code %>

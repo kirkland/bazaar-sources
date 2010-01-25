@@ -12,9 +12,12 @@ class BuySource < Source
           :use_for_merchant_ratings => false,
           :offer_affiliate => true,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 2)
+          :batch_fetch_delay => 2,
+          :product_code_regexp => /^\d{9}$/,
+          :product_code_examples => ['208464207', '211986388'],
+          :product_page_link_erb => "http://www.buy.com/retail/product.asp?sku=<%= product_code %>")
   end
-  
+
   def nullify_offer_url(offer_url)
     offer_url.gsub(/#{BUY_AFFILIATE_PID}/, '')
   end

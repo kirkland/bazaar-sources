@@ -12,7 +12,10 @@ class AmazonSource < Source
           :use_for_merchant_ratings => true,
           :offer_affiliate => true,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 2)
+          :batch_fetch_delay => 2,
+          :product_code_regexp => /^[a-zA-Z0-9]{10}$/,
+          :product_code_examples => ['B000HEC7BO', 'B002YP45EQ'],
+          :product_page_link_erb => "http://www.amazon.com/gp/product/<%= product_code %>")
   end
 
   def url_for_merchant_source_page(merchant_source_code)

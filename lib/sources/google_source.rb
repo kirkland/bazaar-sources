@@ -13,7 +13,9 @@ class GoogleSource < Source
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 3)
+          :batch_fetch_delay => 3,
+          :product_code_regexp => nil,
+          :product_code_examples => [])
   end
   
   def url_for_merchant_source_page(merchant_source_code)

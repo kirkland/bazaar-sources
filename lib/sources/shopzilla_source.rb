@@ -11,7 +11,10 @@ class ShopzillaSource < Source
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 1)
+          :batch_fetch_delay => 1,
+          :product_code_regexp => /^\d{7,11}$/,
+          :product_code_examples => ['1028968032', '852926140'],
+          :product_page_link_erb => "http://www.shopzilla.com/-/<%= product_code %>/shop")
   end
   
   def url_for_merchant_source_page(merchant_source_code)

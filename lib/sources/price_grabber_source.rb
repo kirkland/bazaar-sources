@@ -10,7 +10,10 @@ class PriceGrabberSource < Source
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 2)
+          :batch_fetch_delay => 2,
+          :product_code_regexp => /^\d{6,9}$/,
+          :product_code_examples => ['716698181', '563043'],
+          :product_page_link_erb => "http://reviews.pricegrabber.com/-/m/<%= product_code %>/")
   end
   
   def url_for_merchant_source_page(merchant_source_code)

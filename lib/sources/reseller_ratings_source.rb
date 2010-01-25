@@ -10,7 +10,10 @@ class ResellerRatingsSource < Source
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
           :supports_lifetime_ratings => true,
-          :batch_fetch_delay => 5)
+          :batch_fetch_delay => 5,
+          :product_code_regexp => /^\d{9}$/,
+          :product_code_examples => ['652196596', '676109333'],
+          :product_page_link_erb => "http://resellerratings.nextag.com/<%= product_code %>/resellerratings/prices-html")
   end
   
   def url_for_merchant_source_page(merchant_source_code)

@@ -1,4 +1,5 @@
 require 'set'
+require 'erb'
 
 class Source
   attr_reader :name
@@ -15,6 +16,9 @@ class Source
   attr_reader :supports_lifetime_ratings
   alias :supports_lifetime_ratings? :supports_lifetime_ratings
   attr_reader :batch_fetch_delay
+  attr_reader :product_code_regexp
+  attr_reader :product_code_examples
+  attr_reader :product_page_link_erb
 
   # properties from the legacy Source table in DA/DCHQ
   attr_reader :mappable
@@ -22,7 +26,6 @@ class Source
   attr_reader :for_review_aggregates
   attr_reader :search_url
   attr_reader :search_token_separator
-  attr_reader :review_parser_status
 
   @@subclasses = []
   @@sources = Set.new
@@ -106,6 +109,14 @@ class Source
     source.nil? ? super : source
   end
 
+  def product_code_valid?(product_code)
+    product_code_regexp.nil? ? (!product_code.nil? && product_code.length > 0) : !(product_code =~ product_code_regexp).nil?
+  end
+
+  def product_page_link(product_code)
+    ERB.new(product_page_link_erb).result(binding) unless product_page_link_erb.nil?
+  end
+
   def url_for_merchant_source_page(merchant_source_code)
     nil
   end
@@ -179,6 +190,8 @@ class Source
       simple_source_class = Object.const_set(const_name, Class.new(Source))
       simple_source_class.keyname = source_keyname
       set_source_keyname_const(source_keyname)
+      product_code_regexp = source_attributes['product_code_regexp']
+      product_code_regexp = Regexp.new(product_code_regexp) unless product_code_regexp.nil?
       source = simple_source_class.new(:name => source_attributes['name'],
                                        :offer_enabled => source_attributes['for_offers'] == 'true',
                                        :mappable => source_attributes['mappable'] == 'true',
@@ -186,7 +199,9 @@ class Source
                                        :for_review_aggregates => source_attributes['for_review_aggregates'] == 'true',
                                        :search_url => source_attributes['search_url'],
                                        :search_token_separator => source_attributes['search_token_separator'],
-                                       :review_parser_status => source_attributes['review_parser_status'])
+                                       :product_code_regexp => product_code_regexp,
+                                       :product_code_examples => source_attributes['product_code_examples'],
+                                       :product_page_link_erb => source_attributes['product_page_link_erb'])
       simple_sources << source
     end
     simple_sources

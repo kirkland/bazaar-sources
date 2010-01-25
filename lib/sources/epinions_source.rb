@@ -10,7 +10,9 @@ class EpinionsSource < Source
           :use_for_merchant_ratings => true,
           :offer_affiliate => false,
           :supports_lifetime_ratings => false,
-          :batch_fetch_delay => 1)
+          :batch_fetch_delay => 1,
+          :product_code_regexp => /^\d{4,10}$/,
+          :product_code_examples => ['44393573', '37469715'])
   end
 
   def url_for_merchant_source_page(merchant_source_code)
