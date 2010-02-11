@@ -2,6 +2,30 @@ require 'set'
 require 'erb'
 
 class Source
+  class GeneralError < StandardError
+    attr_reader :source_keyname
+    def initialize(message, source_keyname)
+      super(message)
+      @source_keyname = source_keyname
+    end
+  end
+
+  class ProductNotFoundError < GeneralError
+    attr_reader :product_code
+    def initialize(message, source_keyname, product_code)
+      super(message, source_keyname)
+      @product_code = product_code
+    end
+  end
+
+  class ProductFatalError < GeneralError
+    attr_reader :product_code
+    def initialize(message, source_keyname, product_code)
+      super(message, source_keyname)
+      @product_code = product_code
+    end
+  end
+
   attr_reader :name
   attr_reader :homepage
   attr_reader :cpc
@@ -141,7 +165,7 @@ class Source
     offer_url
   end
 
-  def fetch_offers(product_source_codes)
+  def fetch_offers(product_code)
     nil
   end
 

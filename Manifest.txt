@@ -1,5 +1,5 @@
 History.txt
-lib/api_helpers/amazon_api.rb
+lib/api_helpers/amazon.rb
 lib/api_helpers/api_helper.rb
 lib/api_helpers/external_url.rb
 lib/api_helpers/httparty_nokogiri_parser.rb

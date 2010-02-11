@@ -17,7 +17,7 @@ class ShoppingSource < Source
   end
 
   def api
-    @api = Shopping::Publisher.new
+    @api ||= Shopping::Publisher.new
   end
 
   def url_for_merchant_source_page(merchant_source_code)
@@ -113,9 +113,9 @@ class ShoppingSource < Source
     offer_url.gsub(/3068547/, '8039098')
   end
 
-  def fetch_street_price(product_source_codes)
+  def fetch_street_price(product_code)
     delay_fetch
-    offers = fetch_offers(product_source_codes)
+    offers = fetch_offers(product_code)
     num_offers = 0
     total_prices = 0.0
     offers.each do |offer|

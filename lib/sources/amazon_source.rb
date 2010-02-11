@@ -1,4 +1,4 @@
-require 'api_helpers/amazon_api'
+require 'api_helpers/amazon'
 
 class AmazonSource < Source
   AMAZON_MERCHANT_PERMALINK = 'amazon'
@@ -18,8 +18,12 @@ class AmazonSource < Source
           :product_page_link_erb => "http://www.amazon.com/gp/product/<%= product_code %>")
   end
 
+  def api
+    @api ||= Amazon::ProductAdvertising.new
+  end
+
   def url_for_merchant_source_page(merchant_source_code)
-    AmazonAPI.at_a_glance_url(merchant_source_code)
+    api.at_a_glance_url(merchant_source_code)
   end
 
   def fetch_merchant_source(merchant_source_page_url)
@@ -28,7 +32,7 @@ class AmazonSource < Source
       amazon_merchant_code = $2
     end
     delay_fetch
-    properties = AmazonAPI.seller_lookup(amazon_merchant_code)
+    properties = api.seller_lookup(amazon_merchant_code)
     
     { :source => self,
       :code => properties[:seller_id],
@@ -39,9 +43,9 @@ class AmazonSource < Source
       :homepage => properties[:homepage] }
   end
   
-  def fetch_best_offer(product_source_codes, min_num_offers_to_qualify=nil)
+  def fetch_best_offer(product_code, min_num_offers_to_qualify=nil)
     delay_fetch
-    offers = fetch_offers(product_source_codes)
+    offers = fetch_offers(product_code)
     if !min_num_offers_to_qualify.nil? && offers.length < min_num_offers_to_qualify
       return nil
     end
@@ -55,8 +59,8 @@ class AmazonSource < Source
     end
   end
 
-  def fetch_street_price(product_source_codes)
-    best_offer = fetch_best_offer(product_source_codes, 3)
+  def fetch_street_price(product_code)
+    best_offer = fetch_best_offer(product_code, 3)
     best_offer.nil? ? nil : best_offer.total_price
   end
 
@@ -76,7 +80,15 @@ class AmazonSource < Source
     nullify ? nullify_offer_url(deal_url) : deal_url
   end
 
-  def fetch_offers(product_source_codes)
-    AmazonAPI::find_offers_by_product_id([product_source_codes]).values
+  def fetch_offers(product_code)
+    begin
+      api.find_offers_by_asin(product_code).values
+    rescue Amazon::AsinNotFoundError => ex
+      raise Source::ProductNotFoundError.new(ex.message, keyname, product_code)
+    rescue Amazon::AsinFatalError => ex
+      raise Source::ProductFatalError.new(ex.message, keyname, product_code)
+    rescue => ex
+      raise Source::GeneralError.new(ex.message, keyname)
+    end
   end
 end

@@ -102,11 +102,7 @@ class ShopzillaSource < Source
     @api ||= ShopzillaAPI.new
   end
 
-  def fetch_offers(product_source_codes)
-    unless product_source_codes.empty?
-      api.find_offers_by_product_id(product_source_codes.first)
-    else
-      []
-    end
+  def fetch_offers(product_code)
+    api.find_offers_by_product_id(product_code)
   end
 end
