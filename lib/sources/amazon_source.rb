@@ -6,7 +6,7 @@ class AmazonSource < Source
   def initialize
     super(:name => 'Amazon',
           :homepage => 'http://www.amazon.com/',
-          :cpc => 25,
+          :cpc => 12,
           :offer_enabled => true,
           :offer_ttl_seconds => 3600,
           :use_for_merchant_ratings => true,
