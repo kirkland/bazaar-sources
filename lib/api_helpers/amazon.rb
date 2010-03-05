@@ -76,6 +76,11 @@ module Amazon
       mpn = (item_attributes / 'MPN').inner_html
       upc = (item_attributes / 'UPC').inner_html
       manufacturer = (item_attributes / 'Manufacturer').inner_html
+      
+      features = (item_attributes / 'Feature').collect{|x| x.inner_html } # specifications
+      
+      editorial_reviews = (item / 'EditorialReviews').inject({}) {|ha, x| ha[(x / 'EditorialReview' / 'Source').inner_html] = (x / 'EditorialReview' / 'Content').inner_html; ha }
+      
       begin
         small_image = {:url => (item.at('SmallImage') / 'URL').inner_html,
                        :width => (item.at('SmallImage') / 'Width').inner_html,
@@ -107,7 +112,9 @@ module Amazon
                  :manufacturer => manufacturer,
                  :small_image => small_image,
                  :medium_image => medium_image,
-                 :large_image => large_image}
+                 :large_image => large_image,
+                 :features => features,
+                 :editorial_reviews => editorial_reviews}
       product
     end
 
