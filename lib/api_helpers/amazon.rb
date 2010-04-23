@@ -375,15 +375,19 @@ module Amazon
           rating_block = seller_info.at("div.rating")
           unless rating_block.nil?
             rating_text = rating_block.inner_text
-            if rating_text =~ /\((\d+) ratings\.\)/
+            if rating_text =~ /\((\d+) ratings\)/
               num_merchant_reviews = $1.to_i
             end
           end
           rating_link = seller_info.at("div.rating/a")
           unless rating_link.nil?
             seller_id = rating_link.attributes['href'].match(/seller=([^&#]+)/)[1]
-            merchant_rating = rating_link.inner_text.to_i
           end
+          rating_img = seller_info.at("div.rating/img")
+          unless rating_img.nil?
+            merchant_rating = (rating_img.attributes['img'].match(/stars\-([\d\-]+)/)[1].sub(/\-/,'.').to_f*20).to_i
+          end
+          
           if seller_id.nil?
             shipping_rates_link = seller_info.at("div.availability/a[text() = 'Shipping Rates']")
             unless shipping_rates_link.nil?
