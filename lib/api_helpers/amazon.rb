@@ -389,7 +389,7 @@ module Amazon
           end
           
           if seller_id.nil?
-            shipping_rates_link = seller_info.at("div.availability/a[text() = 'Shipping Rates']")
+            shipping_rates_link = seller_info.at("div.availability/a[text() *= 'shipping rates']")
             unless shipping_rates_link.nil?
               if shipping_rates_link.attributes['href'].match(/seller=([^&#]+)/)
                 seller_id = $1
