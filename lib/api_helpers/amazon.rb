@@ -385,7 +385,7 @@ module Amazon
           end
           rating_img = seller_info.at("div.rating/img")
           unless rating_img.nil?
-            merchant_rating = (rating_img.attributes['img'].match(/stars\-([\d\-]+)/)[1].sub(/\-/,'.').to_f*20).to_i
+            merchant_rating = (rating_img.attributes['src'].match(/stars\-([\d\-]+)/)[1].sub(/\-/,'.').to_f*20).to_i
           end
           
           if seller_id.nil?
