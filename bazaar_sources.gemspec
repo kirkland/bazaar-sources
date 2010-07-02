@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = "1.3.6"
   s.summary = "Bazaar sources is real cool"
 
+  s.add_runtime_dependency("crack", [">= 0.1.7"])
   s.add_runtime_dependency("hpricot")
   s.add_runtime_dependency("httparty")
   s.add_runtime_dependency("nokogiri")
