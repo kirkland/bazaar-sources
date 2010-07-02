@@ -19,7 +19,7 @@ module Shopping
     parser HttpartyNokogiriParser
     format :xml
     base_uri 'http://publisher.api.shopping.com/publisher/3.0/rest/'
-    default_params 'trackingId' => '3068547', 'apiKey' => '21e3f349-c5f4-4783-8354-6ff75371ae22'
+    default_params 'trackingId' => '3068547', 'apiKey' => SHOPPING_API_KEY
 
     MAX_OFFERS = 20
     PUTS_API_URL = false

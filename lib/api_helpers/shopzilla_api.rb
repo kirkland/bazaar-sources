@@ -151,7 +151,7 @@ class ShopzillaAPI
 
   # make any API request given a hash of querystring parameter/values.  Generic parameters will be supplied.
   def make_api_request(service, service_params)
-    params = {'apiKey' => 'ab77d51bc0001e8304f6269c29a3526a',
+    params = {'apiKey' => SHOPZILLA_API_KEY,
               'publisherId' => 3973,
               'placementId' => 1  # This is a value we can pass to
              }
