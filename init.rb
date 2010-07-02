@@ -1,0 +1,1 @@
+require 'bazaar_sources'
