@@ -84,11 +84,11 @@ class AmazonSource < Source
     begin
       api.find_offers_by_asin(product_code).values
     rescue Amazon::AsinNotFoundError => ex
-      raise Source::ProductNotFoundError.new(ex.message << "w/ #{keyname} #{product_code}", keyname, product_code)
+      raise Source::ProductNotFoundError.new(ex.message << " w/ #{product_code}", keyname, product_code)
     rescue Amazon::AsinFatalError => ex
-      raise Source::ProductFatalError.new(ex.message << "w/ #{keyname} #{product_code}", keyname, product_code)
+      raise Source::ProductFatalError.new(ex.message << " w/ #{product_code}", keyname, product_code)
     rescue => ex
-      raise Source::GeneralError.new(ex.message << "w/ #{keyname}", keyname)
+      raise Source::GeneralError.new(ex.message << " w/ #{product_code}", keyname)
     end
   end
 end
