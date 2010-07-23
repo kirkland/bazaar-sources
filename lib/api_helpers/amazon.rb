@@ -304,7 +304,7 @@ module Amazon
       offer_type_header_tables = offers_box_element.search('table')
       offer_type_header_tables.each do |offer_type_header_table|
         
-        if offer_type_header_table.inner_text.force_encoding('UTF-8').include?('Featured Merchants')
+        if offer_type_header_table.inner_text.force_encoding('ASCII-8BIT').include?('Featured Merchants')
           featured_offer_rows = offer_type_header_table.search('tbody.result/tr')
           offers += parse_offer_listing_rows(asin, featured_offer_rows, true)
         elsif !featured_merchants_only && offer_type_header_table.inner_text =~ /New/
