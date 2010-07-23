@@ -303,8 +303,7 @@ module Amazon
       offers_box_element = doc.at('div.resultsset')
       offer_type_header_tables = offers_box_element.search('table')
       offer_type_header_tables.each do |offer_type_header_table|
-        # force all child innertext's to UTF-8
-        inner_text = offer_type_header_table.children.map {|x| x.inner_text.force_encoding('UTF-8') }.join
+        inner_text = offer_type_header_table.inner_text
         if inner_text.include?('Featured Merchants')
           featured_offer_rows = offer_type_header_table.search('tbody.result/tr')
           offers += parse_offer_listing_rows(asin, featured_offer_rows, true)
