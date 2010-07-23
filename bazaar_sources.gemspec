@@ -5,7 +5,7 @@ $:.unshift lib unless $:.include?(lib)
 Gem::Specification.new do |s|
   s.name = "bazaar_sources"
   s.rubyforge_project = "bazaar-sources"
-  s.version = '0.2.0'
+  s.version = '0.2.1.1.1.1'
 
   s.authors = ["chris mcc"]
   s.email = ["cmcclelland@digitaladvisor.com"]

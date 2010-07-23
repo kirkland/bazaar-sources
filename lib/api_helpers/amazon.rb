@@ -303,12 +303,12 @@ module Amazon
       offers_box_element = doc.at('div.resultsset')
       offer_type_header_tables = offers_box_element.search('table')
       offer_type_header_tables.each do |offer_type_header_table|
-        puts offer_type_header_table.inner_text
-        puts "ENCODING: #{offer_type_header_table.inner_text.encoding}"
-        if offer_type_header_table.inner_text.force_encoding('UTF-8').include?('Featured Merchants')
+        inner_text = offer_type_header_table.inner_text
+        inner_text.force_encoding('UTF-8')
+        if inner_text.include?('Featured Merchants')
           featured_offer_rows = offer_type_header_table.search('tbody.result/tr')
           offers += parse_offer_listing_rows(asin, featured_offer_rows, true)
-        elsif !featured_merchants_only && offer_type_header_table.inner_text =~ /New/
+        elsif !featured_merchants_only && inner_text.include?('New')
           other_offer_rows = offer_type_header_table.search('tbody.result/tr')
           offers += parse_offer_listing_rows(asin, other_offer_rows, false, offers.length)
         end
