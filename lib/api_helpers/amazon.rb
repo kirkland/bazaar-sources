@@ -1,7 +1,7 @@
 require 'hpricot'
 require 'open-uri'
 require 'cgi'
-require 'digest/sha2'
+require 'openssl'
 
 module Amazon
   class AsinNotFoundError < StandardError
@@ -596,8 +596,10 @@ module Amazon
       params_string.gsub!('+', '%20')
 
       query = "GET\n#{host}\n#{path}\n#{params_string}"
-
-      hmac = Digest::HMAC.new(AMAZON_SECRET_ACCESS_KEY, Digest::SHA256).digest(query)
+      # hmac = Digest::HMAC.new(AMAZON_SECRET_ACCESS_KEY, Digest::SHA256).digest(query)
+      digest = OpenSSL::Digest::Digest.new("sha256")
+      hmac = OpenSSL::HMAC.digest(digest, AMAZON_SECRET_ACCESS_KEY, query)
+      
       base64_hmac = Base64.encode64(hmac).chomp
       signature = CGI::escape(base64_hmac)
       "http://#{host}#{path}?#{params_string}&Signature=#{signature}"
