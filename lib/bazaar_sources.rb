@@ -22,13 +22,16 @@ module URI
   end
 end
 
-module Hpricot
-  module Traverse
-    def inner_text
-      if respond_to?(:children) and children
-        children.map { |x| x.inner_text.force_encoding('UTF-8') }.join
-      else
-        ""
+# 1.9.1 patch
+if ''.respond_to?(:force_encoding)
+  module Hpricot
+    module Traverse
+      def inner_text
+        if respond_to?(:children) and children
+          children.map { |x| x.inner_text.force_encoding('UTF-8') }.join
+        else
+          ""
+        end
       end
     end
   end
