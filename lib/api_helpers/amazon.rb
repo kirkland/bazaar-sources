@@ -376,12 +376,10 @@ module Amazon
           rating_block = seller_info.at("div.rating")
           unless rating_block.nil?
             rating_text = rating_block.inner_text
-            puts "RATING BLOCK: #{rating_text.inspect}"
-            if rating_text =~ /\((\d+) ratings\)/
-              num_merchant_reviews = $1.to_i
+            if rating_text =~ /\(([\d,]+).+? ratings\)/
+              num_merchant_reviews = $1.gsub!(/\D/,'').to_i
             end
           end
-          puts "GOT NUM MERCHANT REVIEWS: #{num_merchant_reviews.inspect}"
           rating_link = seller_info.at("div.rating/a")
           unless rating_link.nil?
             seller_id = rating_link.attributes['href'].match(/seller=([^&#]+)/)[1]
@@ -426,7 +424,7 @@ module Amazon
             name = safe_strip(seller_label_link.inner_text)
             merchant_type = 'seller'
           end
-
+          
           # Availability
           in_stock = true
           availability_element = seller_info.at("div.availability")
@@ -598,7 +596,7 @@ module Amazon
       params_string.gsub!('+', '%20')
 
       query = "GET\n#{host}\n#{path}\n#{params_string}"
-      
+      # hmac = Digest::HMAC.new(AMAZON_SECRET_ACCESS_KEY, Digest::SHA256).digest(query)
       begin
         digest = OpenSSL::Digest::Digest.new("sha256")
         hmac = OpenSSL::HMAC.digest(digest, AMAZON_SECRET_ACCESS_KEY, query)
