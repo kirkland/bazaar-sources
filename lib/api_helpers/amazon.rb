@@ -376,10 +376,12 @@ module Amazon
           rating_block = seller_info.at("div.rating")
           unless rating_block.nil?
             rating_text = rating_block.inner_text
+            puts "RATING BLOCK: #{rating_text.inspect}"
             if rating_text =~ /\((\d+) ratings\)/
               num_merchant_reviews = $1.to_i
             end
           end
+          puts "GOT NUM MERCHANT REVIEWS: #{num_merchant_reviews.inspect}"
           rating_link = seller_info.at("div.rating/a")
           unless rating_link.nil?
             seller_id = rating_link.attributes['href'].match(/seller=([^&#]+)/)[1]
@@ -596,9 +598,15 @@ module Amazon
       params_string.gsub!('+', '%20')
 
       query = "GET\n#{host}\n#{path}\n#{params_string}"
-      # hmac = Digest::HMAC.new(AMAZON_SECRET_ACCESS_KEY, Digest::SHA256).digest(query)
-      digest = OpenSSL::Digest::Digest.new("sha256")
-      hmac = OpenSSL::HMAC.digest(digest, AMAZON_SECRET_ACCESS_KEY, query)
+      
+      begin
+        digest = OpenSSL::Digest::Digest.new("sha256")
+        hmac = OpenSSL::HMAC.digest(digest, AMAZON_SECRET_ACCESS_KEY, query)
+      rescue RuntimeError => e
+        # ruby 1.9
+        require 'digest/sha2'
+        hmac = Digest::HMAC.new(AMAZON_SECRET_ACCESS_KEY, Digest::SHA256).digest(query)
+      end
       
       base64_hmac = Base64.encode64(hmac).chomp
       signature = CGI::escape(base64_hmac)
