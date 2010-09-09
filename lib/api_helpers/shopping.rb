@@ -175,8 +175,11 @@ module Shopping
           # prices
           cpc = offer.at('cpc').nil? ? nil : (offer.at('cpc').text.to_f*100).to_i
           base_price = to_d_or_nil(offer.at('basePrice').text)
-          shipping_cost = offer.at('shippingCost')['checkSite'] == 'true' ? nil : to_d_or_nil(offer.at('shippingCost').text)
-
+          begin
+            shipping_cost = offer.at('shippingCost')['checkSite'] == 'true' ? nil : to_d_or_nil(offer.at('shippingCost').text)
+          rescue NoMethodError
+            raise "nil.[] problem with offer: #{offer.inspect}"
+          end
           # skip this offer if we already have one from same merchant and it has a lower total price
           existing_offer = offers[store_hash[:id]]
           unless existing_offer.nil?
