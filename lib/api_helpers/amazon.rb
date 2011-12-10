@@ -59,7 +59,8 @@ module Amazon
       request = {'Operation' => 'ItemLookup',
                  'ResponseGroup' => 'Medium',
                  'ItemId' => asin.strip,
-                 'IdType' => 'ASIN'}
+                 'IdType' => 'ASIN',
+                 'AssociateTag' => AMAZON_ASSOCIATE_TAG}
       res = make_amazon_api_request request
 
       item = res / 'Items' / 'Item'
